@@ -1,15 +1,19 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 import Graphic from "@/components/graphic/page";
+import Table from "@/components/table/page";
 
 export default function Home() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Trabalho Primeiro Bimestre</h1>
       <p className={styles.description}>Descrição</p>
-      <div className={styles.graphicsArea}>
-        <Graphic />
-      </div>
+        <div >
+          <Table />
+          <div className={styles.graphicsArea}>
+            <Graphic />
+          </div>
+        </div>
       <div className={styles.footer}>
         <h3>
           Trabalho desenvolvido para a disciplina de Inteligência Computacional
