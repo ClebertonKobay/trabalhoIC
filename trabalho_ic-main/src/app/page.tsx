@@ -7,13 +7,11 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>Trabalho Primeiro Bimestre</h1>
-      <p className={styles.description}>Descrição</p>
-        <div >
+      {/* <p className={styles.description}>Descrição</p> */}
           <Table />
-          <div className={styles.graphicsArea}>
+          <div >
             <Graphic />
           </div>
-        </div>
       <div className={styles.footer}>
         <h3>
           Trabalho desenvolvido para a disciplina de Inteligência Computacional

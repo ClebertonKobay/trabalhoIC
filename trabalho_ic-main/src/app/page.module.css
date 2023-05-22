@@ -2,7 +2,6 @@
 	--background-start-rgb: #001F54;
   	--background-end-rgb: #034078;
 
-	height: 100vh;
 	width: 100vw;
 	display: flex;
 	align-items: center;
@@ -37,6 +36,11 @@
 	padding: 30px;
 	text-align: left;
 	align-self: flex-start;
+}
+.main{
+  display: flex;
+  flex-direction: column;
+  width: 90;
 }
 
 .graphicsArea {

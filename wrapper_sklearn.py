@@ -21,10 +21,10 @@ global hit_perc
 hit_perc = 0.99
 # crossover rate
 global crossover_rate
-crossover_rate = 0.9
+crossover_rate = 0.6
 # mutation rate
 global mutation_rate
-mutation_rate = 0.2
+mutation_rate = 0.1
 #tamanho da população
 global population_size
 population_size = 100
@@ -88,7 +88,7 @@ def termination_condition_met(best_eval: float, stop, pop) -> bool:
             best_params = params.copy()
             old_best_eval = best_eval
             print("Params: ",best_params,"Eval: ",old_best_eval)
-        if stop > 20:
+        if stop > 50:
             return True
         return False
 
@@ -162,8 +162,8 @@ def elitism(parents: List[List[bool]], fitness_scores: List[float], offspring: L
 # data = read_database.thyroidDisease()
 # data = read_database.heartDisease()
 # data = read_database.dermatologyDisease()
-data = read_database.BreastCancerWisconsinDisease()
-# data = read_database.Ionosphere()
+# data = read_database.BreastCancerWisconsinDisease()
+data = read_database.Ionosphere()
 
 
 params_size = len(data[0]) - 1

@@ -22,7 +22,7 @@ def perceptron(parametros:List[int],data: List[List[bool]]):
     X_train, X_test, y_train, y_test = train_test_split(X_parametros, y, test_size=0.3,random_state=25)
 
     # Inicialize o perceptron usando a biblioteca scikit-learn
-    perceptron_model = Perceptron(eta0=learning_rate,max_iter=max_iter, random_state=25)
+    perceptron_model = Perceptron(alpha=0.1,eta0=learning_rate,max_iter=max_iter, random_state=25)
     
     # Treine o perceptron
     perceptron_model.fit(X_train, y_train)

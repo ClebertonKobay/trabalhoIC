@@ -10,7 +10,8 @@ import {
   LineChart,
   ResponsiveContainer,
   Line,
-
+  Text,
+  Label,
 } from "recharts";
 import styles from "./page.module.css";
 import { useEffect,useState } from "react";
@@ -95,14 +96,19 @@ export default function Graphic() {
   };
   if (data != undefined){
   return (
-    <div style={{ width: "100%" }} className={styles.container}>
-    <LineChart width={500} height={300} data={dataToGrafic(data.All_accuracy_AG,data.All_accuracy_Hill)}>
-      <XAxis />
-      <YAxis dataKey="AG"/>
-      <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
-      <Line type="monotone" dataKey="AG" stroke="#8884d8" />
-      <Line type="monotone" dataKey="Hill" stroke="#82ca9d" />
-  </LineChart>
+    <div style={{ width: "90vw" }} className={styles.container}>
+      <Text>Gráfico de comparação entre wrapper com AG e Hill-Climbing</Text>
+      <ResponsiveContainer  height={300}>
+        <LineChart  data={dataToGrafic(data.All_accuracy_AG,data.All_accuracy_Hill)}>
+          <XAxis  />
+          <YAxis dataKey="AG" label={{ value: 'Acurácia', angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
+          <Tooltip />
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
+          <Legend />
+          <Line type="monotone" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave} dataKey="AG" stroke="#FF0000" />
+          <Line type="monotone" dataKey="Hill" stroke="#0000FF" />
+        </LineChart>
+      </ResponsiveContainer>
     </div>
   );
   }else{
