@@ -123,7 +123,7 @@ export default function Graphic() {
       <ResponsiveContainer  height={300}>
         <LineChart  data={dataToGrafic2(data.All_params_Ag,data.All_params_Hill)}>
           <XAxis  />
-          <YAxis dataKey="AG" label={{ value: 'Acurácia', angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
+          <YAxis dataKey="AG" label={{ value: 'Número de parâmetros', angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
           <Tooltip />
           <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
           <Legend />

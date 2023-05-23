@@ -1,9 +1,7 @@
-import init, { Wrapper, new_wrapper_from_string} from './pkg/rust_wasm.js'
+import init, { Wrapper, new_wrapper_from_string} from './rust_wasm';
 
-await init()
+async () => await init()
 
-const n_max_iter = 10000000
-const verbose = true
 
 // Leitura de arquivo
 function readTextFile(file) {
@@ -34,18 +32,20 @@ for (let i = 0; i < 34; ++i) {
 const answ_index = 2
 const data = readTextFile('ionosphere.data')
 // new_wrapper_from_string(data_str: String, pop_len: usize, n_params: usize, answ_index: usize, n_max_iter: usize, step_size: f64)
-let wrapper = new_wrapper_from_string(data, 10, 34, 34, 10, 0.01)
+let wrapper = new_wrapper_from_string(data, 100, 34, 34, 100, 0.01)
 
 
 
 // console.log(wrapper.get_wrapper())
 // train_wrapper(n_gen: usize, mutation_rate: f64, )
 let init_time = Date.now()
-const info = wrapper.train_wrapper(10, 0.1, 0.6)
+const info = wrapper.train_wrapper(50, 0.1, 0.6)
 let end_time = Date.now()
 let time = end_time - init_time
 
-for(let i = 0; i < 10; ++i) {
-    document.getElementById('text').innerHTML += info[4 * i] + '<br>';
-    document.getElementById('text').innerHTML += info[4 * i + 1] + '<br><br>';
+export default function infoWrapper(){
+    return {'info':info,'time':time}
 }
+
+
+// console.log(wrapper.get_wrapper())

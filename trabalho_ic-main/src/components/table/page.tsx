@@ -14,7 +14,6 @@ import {
 import styles from "./page.module.css";
 import { useEffect,useState } from "react";
 import axios from "axios";
-import internal from "stream";
 
 interface Data{
    wrapper_AG_solution : Array<number>,
@@ -47,7 +46,6 @@ export default function Table() {
       console.error("Erro ao obter os dados:", error);
     }
   };
-  
   fetchData(); // Chama a função de requisição ao carregar os dados
 }, [api]);
 

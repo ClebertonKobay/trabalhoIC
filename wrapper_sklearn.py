@@ -197,7 +197,7 @@ def wrapper_AG(population,fitness_scores,All_accuracy_AG,All_params_AG):
             if best_solution[i] == True:
                 params_old_solution.append(i)
 
-        if ((len(params_current_solution) - len(params_old_solution)) == 1 or len(params_current_solution) < len(params_old_solution)) and current_eval >= best_eval:
+        if current_eval >= best_eval:
             best_solution = current_params
             best_eval = current_eval
 
@@ -205,6 +205,9 @@ def wrapper_AG(population,fitness_scores,All_accuracy_AG,All_params_AG):
         print('Best: ',best_eval,'Iter: ',stop,'Len_best: ', len(params_old_solution), 'len_current: ',len(params_current_solution))
         stop += 1
     
+    if current_eval >= best_eval:
+        best_solution = current_params
+        best_eval = current_eval
 
     return best_solution, best_eval, All_accuracy_AG,All_params_AG
 
@@ -242,12 +245,12 @@ def wrapper_hillClimbing(initial_solution: List[bool],best_eval: float,All_accur
                 params_old_best_neighbor.append(i)
 
 
-        if ((len(params_best_neighbor) - len(params_current_solution)) == 1 or len(params_best_neighbor) < len(params_current_solution)) and best_neighbor_score >= objective(current_solution,data):
+        if best_neighbor_score >= objective(current_solution,data):
             current_solution = best_neighbor
             params_current_solution = params_best_neighbor
             best_eval = best_neighbor_score
 
-        if ((len(params_best_neighbor) - len(params_old_best_neighbor)) == 1 or len(params_best_neighbor) < len(params_old_best_neighbor)) and best_neighbor_score >= objective(best_solution,data):
+        if  best_neighbor_score >= objective(best_solution,data):
             best_solution = best_neighbor
             best_eval = best_neighbor_score
         
@@ -257,7 +260,7 @@ def wrapper_hillClimbing(initial_solution: List[bool],best_eval: float,All_accur
 
         print('Best: ',best_eval,'Iter: ',stop,'Len_best: ', len(params_old_best_neighbor), 'len_current: ',len(params_current_solution))
         
-    return best_solution,best_eval,All_accuracy_Hill,All_params_Hill
+    return best_solution, best_eval, All_accuracy_Hill,All_params_Hill
 
 # start_time_AG = time.time()
 # wrapper_AG_solution , wrapper_AG_acurracy = wrapper_AG(population,fitness_scores,params)
@@ -297,12 +300,16 @@ def api():
     All_params_Hill = []
     
     start_time_AG = time.time()
-    wrapper_AG_solution , wrapper_AG_acurracy, All_accuracy_AG,All_params_AG = wrapper_AG(population,fitness_scores,All_accuracy_AG,All_params_AG)
+
+    wrapper_AG_solution , wrapper_AG_acurracy, All_accuracy_AG, All_params_AG = wrapper_AG(population,fitness_scores,All_accuracy_AG,All_params_AG)
+
     end_time_AG = time.time()
     elapsed_time_AG = end_time_AG - start_time_AG 
 
     start_time_hill = time.time()
+
     wrapper_hillClimbing_solution,wrapper_hillClimbing_acurracy,All_accuracy_Hill,All_params_Hill = wrapper_hillClimbing(params,best_eval,All_accuracy_Hill,All_params_Hill)
+    
     end_time__hill = time.time()
     elapsed_time_hill = end_time__hill - start_time_hill
 
