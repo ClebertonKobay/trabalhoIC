@@ -79,14 +79,14 @@ export default function Table() {
   return (
     <div style={{ width: "100%" }} className={styles.container}>
       <p>Wrapper com perceptron em Python com a biblioteca Sklearn</p>
-      <p>A precisão do wrapper com AG foi de: {data?.wrapper_AG_acurracy.toPrecision(4)}%</p>
+      <p>A precisão do wrapper com AG foi de: {100 * Number(data?.wrapper_AG_acurracy.toPrecision(4))}%</p>
       <p>Foram utilizados&nbsp; 
        {
          data?.wrapper_AG_solution.filter(
           (value,index)=>{if(value == 1) 
             return index
-          }).length
-      }&nbsp;parametros de {data.wrapper_hillClimbing_solution.length}, sendo eles:
+          }).length+1
+      }&nbsp;parametros de {data.wrapper_AG_solution.length}, sendo eles:
      </p>
      [{
       
@@ -100,7 +100,7 @@ export default function Table() {
 
       <br/>
 
-      <p>A precisão do wrapper com Hill Climbing foi de: {data?.wrapper_hillClimbing_acurracy.toPrecision(4)}%</p>
+      <p>A precisão do wrapper com Hill Climbing foi de: {100 * Number(data?.wrapper_hillClimbing_acurracy.toPrecision(4))}%</p>
       <p>Foram utilizados&nbsp;
        {
          data?.wrapper_hillClimbing_solution.filter(

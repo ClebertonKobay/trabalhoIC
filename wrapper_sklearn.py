@@ -39,11 +39,6 @@ global old_best_eval
 old_best_eval = 0
 #melhores parametros até o momento
 global best_params
-best_params = []
-best_params = np.zeros(30)
-
-
-
 
 # Função objetivo
 def objective(guess: List[bool], data: List[List[float]]) -> float:
@@ -77,18 +72,8 @@ def initialize_population(params_size: int) -> List[List[bool]]:
 
 # Dá para criar um array
 # Anota o melhor usando "k" parametros
-def termination_condition_met(best_eval: float, stop, pop) -> bool:
-        global best_params, old_best_eval
-        params = []
-        for i in range(len(pop)):
-            if pop[i] == True:
-                params.append(i)
-
-        if len(params) < len(best_params) and  best_eval >= old_best_eval:
-            best_params = params.copy()
-            old_best_eval = best_eval
-            print("Params: ",best_params,"Eval: ",old_best_eval)
-        if stop > 50:
+def termination_condition_met(best_eval: float, stop) -> bool:
+        if stop >= 20:
             return True
         return False
 
@@ -177,12 +162,14 @@ fitness_scores = evaluate_population(population, data)
 best_eval = max(fitness_scores)
 params = population[fitness_scores.index(best_eval)]
 
-def wrapper_AG(population,fitness_scores,params,All_accuracy_AG):
+def wrapper_AG(population,fitness_scores,All_accuracy_AG,All_params_AG):
     # Main loop
     stop = 0
     best_eval = max(fitness_scores)
-    All_accuracy_AG = [] 
-    while not termination_condition_met(best_eval, stop, params):
+    best_solution = population[fitness_scores.index(best_eval)]
+    All_accuracy_AG = []
+    All_params_AG = []
+    while not termination_condition_met(best_eval, stop):
         # Seleciona os melhores filhos com base na sua pontuação
         parents = tournament(population, fitness_scores, 3)
         # Pega a criação dos filhos com base na seleção
@@ -197,15 +184,29 @@ def wrapper_AG(population,fitness_scores,params,All_accuracy_AG):
 
         # population = hill_climbing(population, fitness_scores, data)
 
-        best_eval = max(fitness_scores)
-        All_accuracy_AG.append(best_eval)
-        params = population[fitness_scores.index(best_eval)]
-        print('Best: ',best_eval,'Iter: ',stop)
+        current_eval = max(fitness_scores)
+        All_accuracy_AG.append(current_eval)
+
+        current_params = population[fitness_scores.index(current_eval)]
+
+        params_current_solution = []
+        params_old_solution = []
+        for i in range(len(population[0])):
+            if current_params[i] == True:
+                params_current_solution.append(i)
+            if best_solution[i] == True:
+                params_old_solution.append(i)
+
+        if ((len(params_current_solution) - len(params_old_solution)) == 1 or len(params_current_solution) < len(params_old_solution)) and current_eval >= best_eval:
+            best_solution = current_params
+            best_eval = current_eval
+
+        All_params_AG.append(params_current_solution)
+        print('Best: ',best_eval,'Iter: ',stop,'Len_best: ', len(params_old_solution), 'len_current: ',len(params_current_solution))
         stop += 1
+    
 
-    best_solution = max(fitness_scores)
-
-    return params, best_solution,All_accuracy_AG
+    return best_solution, best_eval, All_accuracy_AG,All_params_AG
 
 
 def generate_neighbors(current_solution):
@@ -217,12 +218,13 @@ def generate_neighbors(current_solution):
     return neighbors
 
 
-def wrapper_hillClimbing(initial_solution: List[bool],best_eval: float,params: List[bool],All_accuracy_Hill):
+def wrapper_hillClimbing(initial_solution: List[bool],best_eval: float,All_accuracy_Hill,All_params_Hill):
     current_solution = initial_solution
     best_solution =  initial_solution
     stop = 0
     All_accuracy_Hill = []
-    while not termination_condition_met(best_eval, stop, params):
+    All_params_Hill = []
+    while not termination_condition_met(best_eval, stop):
         neighbors = generate_neighbors(current_solution)
         neighbor_scores = evaluate_population(neighbors,data)
         best_neighbor_score = max(neighbor_scores)
@@ -240,17 +242,22 @@ def wrapper_hillClimbing(initial_solution: List[bool],best_eval: float,params: L
                 params_old_best_neighbor.append(i)
 
 
-        if len(params_best_neighbor) < len(params_current_solution) and best_neighbor_score >= objective(current_solution,data):
+        if ((len(params_best_neighbor) - len(params_current_solution)) == 1 or len(params_best_neighbor) < len(params_current_solution)) and best_neighbor_score >= objective(current_solution,data):
             current_solution = best_neighbor
+            params_current_solution = params_best_neighbor
+            best_eval = best_neighbor_score
 
-        if len(params_best_neighbor) < len(params_old_best_neighbor) and best_neighbor_score >= objective(best_solution,data):
+        if ((len(params_best_neighbor) - len(params_old_best_neighbor)) == 1 or len(params_best_neighbor) < len(params_old_best_neighbor)) and best_neighbor_score >= objective(best_solution,data):
             best_solution = best_neighbor
+            best_eval = best_neighbor_score
         
         stop += 1
-        best_eval = max(neighbor_scores)
         All_accuracy_Hill.append(best_eval)
-        params = current_solution
-    return best_solution,best_eval,All_accuracy_Hill
+        All_params_Hill.append(params_current_solution)
+
+        print('Best: ',best_eval,'Iter: ',stop,'Len_best: ', len(params_old_best_neighbor), 'len_current: ',len(params_current_solution))
+        
+    return best_solution,best_eval,All_accuracy_Hill,All_params_Hill
 
 # start_time_AG = time.time()
 # wrapper_AG_solution , wrapper_AG_acurracy = wrapper_AG(population,fitness_scores,params)
@@ -283,18 +290,20 @@ def wrapper_hillClimbing(initial_solution: List[bool],best_eval: float,params: L
 
 
 def api():
-    global All_accuracy_AG, All_accuracy_Hill
+    global All_accuracy_AG, All_accuracy_Hill,All_params_AG,All_params_Hill
     All_accuracy_AG = []
     All_accuracy_Hill = []
+    All_params_AG = []
+    All_params_Hill = []
     
     start_time_AG = time.time()
-    wrapper_AG_solution , wrapper_AG_acurracy,All_accuracy_AG = wrapper_AG(population,fitness_scores,params,All_accuracy_AG)
+    wrapper_AG_solution , wrapper_AG_acurracy, All_accuracy_AG,All_params_AG = wrapper_AG(population,fitness_scores,All_accuracy_AG,All_params_AG)
     end_time_AG = time.time()
     elapsed_time_AG = end_time_AG - start_time_AG 
 
     start_time_hill = time.time()
-    wrapper_hillClimbing_solution,wrapper_hillClimbing_acurracy,All_accuracy_Hill = wrapper_hillClimbing(params,best_eval,params,All_accuracy_Hill)
+    wrapper_hillClimbing_solution,wrapper_hillClimbing_acurracy,All_accuracy_Hill,All_params_Hill = wrapper_hillClimbing(params,best_eval,All_accuracy_Hill,All_params_Hill)
     end_time__hill = time.time()
     elapsed_time_hill = end_time__hill - start_time_hill
 
-    return wrapper_AG_solution , wrapper_AG_acurracy, elapsed_time_AG, wrapper_hillClimbing_solution,wrapper_hillClimbing_acurracy, elapsed_time_hill,All_accuracy_AG, All_accuracy_Hill
+    return wrapper_AG_solution , wrapper_AG_acurracy, elapsed_time_AG, wrapper_hillClimbing_solution,wrapper_hillClimbing_acurracy, elapsed_time_hill,All_accuracy_AG, All_accuracy_Hill,All_params_AG,All_params_Hill

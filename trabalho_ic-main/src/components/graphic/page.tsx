@@ -36,6 +36,8 @@ interface Data{
   elapsed_time_hill : number,
   All_accuracy_AG: Array<number>,
   All_accuracy_Hill: Array<number>,
+  All_params_Ag: Array<Array<number>>,
+  All_params_Hill:Array<Array<number>>,
 }
 
 
@@ -73,6 +75,13 @@ export default function Graphic() {
     const dataGrafic = dataArray1.map((element,index) => {
       return {"AG": element,"Hill": dataArray2[index],'index': index};
     });
+    return dataGrafic;
+  };
+
+  const dataToGrafic2 = (dataArray1: Array<Array<number>>,dataArray2: Array<Array<number>>):{"AG": number,"Hill":number,"index":number}[]=> {
+    const dataGrafic = dataArray1.map((element,index) => {
+      return {"AG": element.length ,"Hill": dataArray2[index].length,'index': index};
+    });
     console.log(dataGrafic);
     return dataGrafic;
   };
@@ -97,9 +106,22 @@ export default function Graphic() {
   if (data != undefined){
   return (
     <div style={{ width: "90vw" }} className={styles.container}>
-      <Text>Gráfico de comparação entre wrapper com AG e Hill-Climbing</Text>
+      <Text>Gráfico de comparação de acurácia entre wrapper com AG e Hill-Climbing</Text>
       <ResponsiveContainer  height={300}>
         <LineChart  data={dataToGrafic(data.All_accuracy_AG,data.All_accuracy_Hill)}>
+          <XAxis  />
+          <YAxis dataKey="AG" label={{ value: 'Acurácia', angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
+          <Tooltip />
+          <CartesianGrid stroke="#eee" strokeDasharray="5 5"/>
+          <Legend />
+          <Line type="monotone" dataKey="AG" stroke="#FF0000" />
+          <Line type="monotone" dataKey="Hill" stroke="#0000FF" />
+        </LineChart>
+      </ResponsiveContainer>
+
+      <Text>Gráfico de comparação da quantidade de parâmetros entre wrapper com AG e Hill-Climbing</Text>
+      <ResponsiveContainer  height={300}>
+        <LineChart  data={dataToGrafic2(data.All_params_Ag,data.All_params_Hill)}>
           <XAxis  />
           <YAxis dataKey="AG" label={{ value: 'Acurácia', angle: -90, position: 'insideLeft', textAnchor: 'middle' }} />
           <Tooltip />

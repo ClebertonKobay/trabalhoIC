@@ -1,0 +1,1 @@
+Algum arquivo para simular dados de leitura.
